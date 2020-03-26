@@ -40,7 +40,7 @@ export default (): IUseFetcherResult => {
     const response = await fetch(`${host}${path}`, options);
     setGlobalLoading(false);
     setLoading(false);
-    if (response && fetchSuccess(response)) {
+    if (response) {
       const data = await to(bodyParser(response));
       const result: IFetchResult = {
         response,
@@ -51,11 +51,15 @@ export default (): IUseFetcherResult => {
       const finalResult = responseMiddleware
         ? responseMiddleware(result, finalFetchConfig)
         : result;
-      onSuccess && onSuccess(finalResult);
+      
+      if (fetchSuccess(response)) {
+        onSuccess && onSuccess(finalResult);
+      } else {
+        setGlobalError(true);
+        onError && onError();
+      }
       return finalResult;
     }
-    setGlobalError(true);
-    onError && onError();
     throw new Error("An error occurred while fetching.")
   };
 
