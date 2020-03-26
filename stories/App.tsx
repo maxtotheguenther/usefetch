@@ -20,7 +20,7 @@ function makeToken(length: number): string {
   return result;
 }
 
-export default function App({ children }: {children: React.ReactNode}) {
+export default function App({ children }: { children: React.ReactNode }) {
   const [token, setToken] = React.useState<string>(makeToken(30));
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -29,10 +29,16 @@ export default function App({ children }: {children: React.ReactNode}) {
     return () => clearInterval(interval);
   }, []);
 
-return <Demo token={token}>{children}</Demo>;
+  return <Demo token={token}>{children}</Demo>;
 }
 
-const Demo = ({ token, children }: { token: string, children: React.ReactNode }) => {
+const Demo = ({
+  token,
+  children
+}: {
+  token: string;
+  children: React.ReactNode;
+}) => {
   const globalOpts: IFetchGlobalConf = {
     host: "https://reqres.in/",
     onSuccess: () => toast.success("Success"),
@@ -61,9 +67,12 @@ const Demo = ({ token, children }: { token: string, children: React.ReactNode })
   };
   return (
     <div className="demo">
-      <FetchProvider globalFetchConf={globalOpts}>
-        {children}
-      </FetchProvider>
+      <link
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,300italic"
+        rel="stylesheet"
+        type="text/css"
+      ></link>
+      <FetchProvider globalFetchConf={globalOpts}>{children}</FetchProvider>
     </div>
   );
 };

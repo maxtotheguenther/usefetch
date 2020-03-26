@@ -1,3 +1,6 @@
+export type IFetchConfigDependsOn = [IFetchConfig, Array<any>]
+export type IFetchConfigOrFetchConfigDependsOn = IFetchConfig | IFetchConfigDependsOn
+
 export interface IFetchResult {
   data?: any;
   response?: Response;

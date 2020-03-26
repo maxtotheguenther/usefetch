@@ -1,19 +1,26 @@
 import * as React from "react";
 import useFetcher from "./useFetcher";
-import { IFetchConfig, IFetchResult, IUseLazyFetchResult } from "../types";
+import { IFetchConfig, IFetchResult, IUseLazyFetchResult, IFetchConfigOrFetchConfigDependsOn } from "../types";
 
 export default (
-  fetchConfig: IFetchConfig,
-  waitTilDefined: Array<any> = [],
+  fetchConfig: IFetchConfigOrFetchConfigDependsOn,
   dependencies: Array<any> = []
 ): IUseLazyFetchResult => {
+  const fetchDependsOn = fetchConfig[0]
+  const areAllDependenciesDefined = () => {
+    if (fetchDependsOn) {
+      const waitFor = fetchConfig[1] as Array<any>
+      return waitFor.filter(_ => _ === undefined || _ === null || _ === false).length === 0;
+    }
+    return true
+  }
+  const dependenciesDefined = areAllDependenciesDefined()
+  const config = fetchDependsOn ? fetchConfig[0] as IFetchConfig : fetchConfig as IFetchConfig
   const [result, setResult] = React.useState<IFetchResult>();
   const { run, loading } = useFetcher();
-  const dependenciesDefined =
-    waitTilDefined.filter(_ => _ === undefined).length === 0;
   React.useEffect(() => {
     async function runQuery() {
-      const result = await run(fetchConfig);
+      const result = await run(config);
       setResult(result);
     }
     dependenciesDefined && runQuery();

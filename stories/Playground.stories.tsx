@@ -2,8 +2,9 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import App from "./App";
 import FetchDemo from "./FetchDemo";
-import LazyFetchDemo from "./LazyFetchDemo";
 import FetcherDemo from "./FetcherDemo";
+import "./stories.css";
+import LazyFetchDemo from "./LazyFetchDemo";
 
 storiesOf("Playground", module)
   .add("UseFetchDemo", () => (
@@ -21,7 +22,3 @@ storiesOf("Playground", module)
       <FetcherDemo />
     </App>
   ))
-  .add("UseFetcherDemo without context", () => (
-      <FetcherDemo />
-  ));
-  
