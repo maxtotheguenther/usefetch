@@ -6,9 +6,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build-package": "rm -rf lib && tsc"
+    "build-package": "rm -rf lib && tsc",
+    "prepublish": "yarn test && yarn build-package"
   },
   "keywords": [],
   "author": "",
