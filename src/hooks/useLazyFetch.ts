@@ -17,7 +17,7 @@ export default (
   const dependenciesDefined = areAllDependenciesDefined()
   const config = fetchDependsOn ? fetchConfig[0] as IFetchConfig : fetchConfig as IFetchConfig
   const [result, setResult] = React.useState<IFetchResult>();
-  const { run, loading } = useFetcher();
+  const { run, loading, abortLast } = useFetcher();
   React.useEffect(() => {
     async function runQuery() {
       const result = await run(config);
@@ -27,6 +27,7 @@ export default (
   }, [...dependencies, dependenciesDefined]);
 
   return {
+    abort: abortLast,
     loading,
     ...result
   };

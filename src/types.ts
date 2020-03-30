@@ -19,6 +19,7 @@ export interface IUseFetchResult extends IFetchResult {
 
 export interface IUseLazyFetchResult extends IFetchResult {
   loading: boolean;
+  abort: () => void;
 }
 
 export interface IUseFetcherResult {
