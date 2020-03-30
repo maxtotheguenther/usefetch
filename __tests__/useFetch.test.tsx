@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import useFetch from "../src/hooks/useFetch";
 import FetchProvider from "../src/context/FetchProvider";
 import { IFetchConfig, IFetchGlobalConf } from "../src/types";
+import fetchMock from "jest-fetch-mock";
 
 const globalOpts: IFetchGlobalConf = {
   host: "https://reqres.in/",
@@ -25,9 +26,10 @@ test("init useFetchHook result should be correct", () => {
   const { result } = renderHook(() => useFetch(loadUsers), {
     wrapper
   });
-  const { current: { run, ...other } } = result
+  const { current: { run, abort, ...other } } = result
   // Got run func.
   expect(result.current).toHaveProperty("run");
+  expect(result.current).toHaveProperty("abort");
   // Got the correct initial state.
   expect(other).toEqual({
     loading: false,
