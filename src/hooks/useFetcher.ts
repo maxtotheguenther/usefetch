@@ -24,21 +24,16 @@ export default (): IUseFetcherResult => {
       onSuccess,
       onError,
       fetchSuccess,
-      bodyParser
+      bodyParser,
+      responseMiddleware
     } = finalFetchConfig;
-    const {
-      responseMiddleware,
-      setLoading: setGlobalLoading,
-      setError: setGlobalError
-    } = fetchContext;
+
     const options: RequestInit | undefined = fetchOptions && {
       ...fetchOptions,
       method
     };
     setLoading(true);
-    setGlobalLoading(true);
     const response = await fetch(`${host}${path}`, options);
-    setGlobalLoading(false);
     setLoading(false);
     if (response) {
       const data = await to(bodyParser(response));
@@ -55,7 +50,6 @@ export default (): IUseFetcherResult => {
       if (fetchSuccess(response)) {
         onSuccess && onSuccess(finalResult);
       } else {
-        setGlobalError(true);
         onError && onError();
       }
       return finalResult;

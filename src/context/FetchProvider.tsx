@@ -1,15 +1,7 @@
 import * as React from "react";
 import { IFetchGlobalConf, IFetchContext, IFetchState } from "../types";
 
-export const FetchContext = React.createContext<IFetchContext>({
-  loading: false,
-  setLoading: () => null,
-  error: false,
-  setError: () => null,
-  host: "",
-  fetchSuccess: res => res.ok,
-  bodyParser: async res => await res.json()
-});
+export const FetchContext = React.createContext<IFetchContext | null>(null);
 
 export default ({
   globalFetchConf,

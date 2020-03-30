@@ -1,10 +1,12 @@
 import * as React from "react";
 import { toast } from "react-toastify";
-import to from "../src/functionalities/to";
 import useFetcher from "../src/hooks/useFetcher";
 import { IFetchConfig, IFetchResult } from "../src/types";
 
 const loadUsers: IFetchConfig = {
+  host: "https://reqres.in/",
+  fetchSuccess: (res) => res.ok,
+  bodyParser: (res) => res.json(),
   method: "GET",
   path: "api/users",
   onSuccess: result => {

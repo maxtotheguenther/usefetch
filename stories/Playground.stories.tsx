@@ -12,6 +12,7 @@ storiesOf("Playground", module)
       <FetchDemo />
     </App>
   ))
+  .add("UseFetcherDemo without context", () => <FetcherDemo />)
   .add("UseLazyFetchDemo", () => (
     <App>
       <LazyFetchDemo />
@@ -21,4 +22,4 @@ storiesOf("Playground", module)
     <App>
       <FetcherDemo />
     </App>
-  ))
+  ));
