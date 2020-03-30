@@ -16,7 +16,7 @@ export default () => {
     }, 2000);
     return () => clearInterval(interval);
   }, []);
-  const { data, loading, ok, status } = useLazyFetchNew(loadUsers({ id: "1" }));
+  const { data, loading, rerun } = useLazyFetchNew(loadUsers({ id: "1" }));
   const id = data?.data && "2";
   const emailIsCorrect = data?.data?.email === "george.bluth@reqres.in";
   
@@ -29,6 +29,7 @@ export default () => {
     <React.Fragment>
       <h4>Lazy Loaded Stuff on mount</h4>
       <p>First request</p>
+      <button onClick={() => rerun()}>Rerun first request</button>
       <p>
         First request loading:
         {loading ? (

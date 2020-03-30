@@ -4,11 +4,11 @@ import useFetcher from "../src/hooks/useFetcher";
 import { IFetchConfig, IFetchResult } from "../src/types";
 
 const loadUsers: IFetchConfig = {
-  host: "https://reqres.in/",
-  fetchSuccess: (res) => res.ok,
-  bodyParser: (res) => res.json(),
-  method: "GET",
-  path: "api/users",
+  host: "https://www.mocky.io/",
+  fetchSuccess: res => res.ok,
+  bodyParser: res => res.json(),
+  method: "PUT",
+  path: "v2/5185415ba171ea3a00704eed?mocky-delay=2000ms",
   onSuccess: result => {
     if (result.ok) {
       toast.info("Local Fetch Success");
@@ -25,11 +25,8 @@ export default () => {
   return (
     <>
       <button onClick={fetchData}>Load stuff with fetcher</button>
-      {fetchResult && (
-        <>
-          {JSON.stringify(fetchResult.data, null, 2)}
-        </>
-      )}
+      <button onClick={() => fetcher.abortLast()}>Abort</button>
+      {fetchResult && <>{JSON.stringify(fetchResult.data, null, 2)}</>}
     </>
   );
 };

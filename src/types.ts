@@ -8,10 +8,12 @@ export interface IFetchResult {
   status?: number;
   ok?: boolean;
   custom?: any;
+  rerun?: (params?: any) => Promise<IFetchResult>;
 }
 
 export interface IUseFetchResult extends IFetchResult {
   loading: boolean;
+  abort: () => void;
   run: (params: any) => Promise<IFetchResult>;
 }
 
@@ -21,6 +23,7 @@ export interface IUseLazyFetchResult extends IFetchResult {
 
 export interface IUseFetcherResult {
   loading: boolean;
+  abortLast: () => void;
   run: (fetchConfig: IFetchConfig) => Promise<IFetchResult>;
 }
 

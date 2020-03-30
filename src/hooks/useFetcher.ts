@@ -12,6 +12,7 @@ import { prepareFetchConfig } from "../functionalities/fetch";
 export default (): IUseFetcherResult => {
   const fetchContext = React.useContext(FetchContext);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [abortController, setAbortController] = React.useState<AbortController | null>(null)
 
   const makeFetch = async (
     finalFetchConfig: IFetchFinalConf
@@ -27,11 +28,15 @@ export default (): IUseFetcherResult => {
       bodyParser,
       responseMiddleware
     } = finalFetchConfig;
+    const newAbortController = new AbortController()
+    setAbortController(newAbortController)
 
     const options: RequestInit | undefined = fetchOptions && {
       ...fetchOptions,
+      signal: newAbortController.signal,
       method
     };
+
     setLoading(true);
     const response = await fetch(`${host}${path}`, options);
     setLoading(false);
@@ -41,12 +46,13 @@ export default (): IUseFetcherResult => {
         response,
         data,
         status: response.status,
-        ok: response.ok
+        ok: response.ok,
+        rerun: () => makeFetch(finalFetchConfig), // Rerun with the same config
       };
       const finalResult = responseMiddleware
         ? responseMiddleware(result, finalFetchConfig)
         : result;
-      
+
       if (fetchSuccess(response)) {
         onSuccess && onSuccess(finalResult);
       } else {
@@ -54,13 +60,16 @@ export default (): IUseFetcherResult => {
       }
       return finalResult;
     }
-    throw new Error("An error occurred while fetching.")
+    throw new Error("An error occurred while fetching.");
   };
 
   return {
     loading,
-    run: async(fetchConf: IFetchConfig) => {
-      const resultOrError = await to(makeFetch(prepareFetchConfig(fetchConf, fetchContext)));
+    abortLast: () => abortController?.abort(),
+    run: async (fetchConf: IFetchConfig) => {
+      const resultOrError = await to(
+        makeFetch(prepareFetchConfig(fetchConf, fetchContext))
+      );
       if (resultOrError instanceof Error) {
         return {
           response: undefined,
@@ -70,9 +79,8 @@ export default (): IUseFetcherResult => {
           error: resultOrError
         };
       } else {
-        return resultOrError
+        return resultOrError;
       }
     }
-      
   };
 };

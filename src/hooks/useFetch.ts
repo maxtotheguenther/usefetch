@@ -4,7 +4,7 @@ import { IFetchConfig, IFetchResult, IUseFetchResult } from "../types";
 
 export default (f: (p: any) => IFetchConfig): IUseFetchResult => {
   const [result, setResult] = React.useState<IFetchResult>();
-  const { run, loading } = useFetcher();
+  const { run, loading, abortLast } = useFetcher();
 
   const wrappedRun = async (params: any) => {
     const result = await run(f(params)); 
@@ -13,6 +13,7 @@ export default (f: (p: any) => IFetchConfig): IUseFetchResult => {
   };
   return {
     loading,
+    abort: abortLast,
     run: wrappedRun,
     ...result
   };
