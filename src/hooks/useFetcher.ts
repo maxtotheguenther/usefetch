@@ -9,10 +9,22 @@ import {
 } from "../types";
 import { prepareFetchConfig } from "../functionalities/fetch";
 
+export const defaultFetchResult: IFetchResult = {
+  response: undefined,
+  data: undefined,
+  status: undefined,
+  ok: undefined,
+  error: undefined,
+  rerun: () => new Promise(() => defaultFetchResult)
+};
+
 export default (): IUseFetcherResult => {
   const fetchContext = React.useContext(FetchContext);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [abortController, setAbortController] = React.useState<AbortController | null>(null)
+  const [
+    abortController,
+    setAbortController
+  ] = React.useState<AbortController | null>(null);
 
   const makeFetch = async (
     finalFetchConfig: IFetchFinalConf
@@ -28,8 +40,8 @@ export default (): IUseFetcherResult => {
       bodyParser,
       responseMiddleware
     } = finalFetchConfig;
-    const newAbortController = new AbortController()
-    setAbortController(newAbortController)
+    const newAbortController = new AbortController();
+    setAbortController(newAbortController);
 
     const options: RequestInit | undefined = fetchOptions && {
       ...fetchOptions,
@@ -47,7 +59,10 @@ export default (): IUseFetcherResult => {
         data,
         status: response.status,
         ok: response.ok,
-        rerun: () => makeFetch(finalFetchConfig), // Rerun with the same config
+        rerun: (fetchConf?: IFetchConfig) => 
+         fetchConf
+            ? makeFetch(prepareFetchConfig(fetchConf, fetchContext))
+            : makeFetch(finalFetchConfig) // Rerun with the same config
       };
       const finalResult = responseMiddleware
         ? responseMiddleware(result, finalFetchConfig)
@@ -72,10 +87,7 @@ export default (): IUseFetcherResult => {
       );
       if (resultOrError instanceof Error) {
         return {
-          response: undefined,
-          data: undefined,
-          status: undefined,
-          ok: undefined,
+          ...defaultFetchResult,
           error: resultOrError
         };
       } else {

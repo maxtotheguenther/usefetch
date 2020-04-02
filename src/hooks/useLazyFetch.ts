@@ -1,5 +1,5 @@
 import * as React from "react";
-import useFetcher from "./useFetcher";
+import useFetcher, { defaultFetchResult } from "./useFetcher";
 import { IFetchConfig, IFetchResult, IUseLazyFetchResult, IFetchConfigOrFetchConfigDependsOn } from "../types";
 
 export default (
@@ -27,8 +27,17 @@ export default (
   }, [...dependencies, dependenciesDefined]);
 
   return {
+    ...result,
     abort: abortLast,
     loading,
-    ...result
+    rerun: async (fetchConf?: IFetchConfig) => {
+      if (result) {
+        const rerunResult = await result.rerun(fetchConf)
+        setResult(rerunResult)
+        return rerunResult
+      } else {
+        return defaultFetchResult;
+      }
+    }
   };
 };

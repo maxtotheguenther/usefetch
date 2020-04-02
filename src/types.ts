@@ -8,7 +8,7 @@ export interface IFetchResult {
   status?: number;
   ok?: boolean;
   custom?: any;
-  rerun?: (params?: any) => Promise<IFetchResult>;
+  rerun: (fetchConf?: IFetchConfig) => Promise<IFetchResult>;
 }
 
 export interface IUseFetchResult extends IFetchResult {

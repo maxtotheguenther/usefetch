@@ -20,7 +20,7 @@ export default () => {
   const id = data?.data && "2";
   const emailIsCorrect = data?.data?.email === "george.bluth@reqres.in";
   
-  const { data: data2, loading: loading2 } = useLazyFetchNew([
+  const { data: data2, loading: loading2, rerun: rerun2 } = useLazyFetchNew([
     loadUsers({ id }),
     [id, emailIsCorrect]
   ]);
@@ -30,6 +30,11 @@ export default () => {
       <h4>Lazy Loaded Stuff on mount</h4>
       <p>First request</p>
       <button onClick={() => rerun()}>Rerun first request</button>
+      <button onClick={async () => {
+        const { data } = await rerun(loadUsers({id: "3"}))
+        console.log("Data", data)
+        rerun2(loadUsers({ id: data.data.id + 1}))
+      }}>Rerun all request</button>
       <p>
         First request loading:
         {loading ? (

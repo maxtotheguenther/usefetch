@@ -26,10 +26,11 @@ test("init useFetchHook result should be correct", () => {
   const { result } = renderHook(() => useFetch(loadUsers), {
     wrapper
   });
-  const { current: { run, abort, ...other } } = result
+  const { current: { run, abort, rerun, ...other } } = result
   // Got run func.
   expect(result.current).toHaveProperty("run");
   expect(result.current).toHaveProperty("abort");
+  expect(result.current).toHaveProperty("rerun");
   // Got the correct initial state.
   expect(other).toEqual({
     loading: false,
