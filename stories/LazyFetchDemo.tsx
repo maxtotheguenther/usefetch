@@ -4,7 +4,8 @@ import { IFetchConfig } from "../src/types";
 
 const loadUsers = ({ id }: { id: string }): IFetchConfig => ({
   method: "GET",
-  path: `api/users/${id}`
+  path: `api/users/${id}`,
+  initData: { hello: "Was geht"}  
 });
 
 export default () => {  

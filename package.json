@@ -1,6 +1,6 @@
 {
   "name": "bechtle-fetch",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "",
   "main": "lib/index.js",
   "types": "dist/index.d.ts",

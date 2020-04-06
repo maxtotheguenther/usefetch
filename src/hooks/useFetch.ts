@@ -4,14 +4,17 @@ import { IFetchConfig, IFetchResult, IUseFetchResult } from "../types";
 
 export default (f: (p: any) => IFetchConfig): IUseFetchResult => {
   const [result, setResult] = React.useState<IFetchResult>();
+  const [fetchConfig, setFetchConfig] = React.useState<IFetchConfig>();
   const { run, loading, abortLast } = useFetcher();
-
   const wrappedRun = async (params: any) => {
-    const result = await run(f(params)); 
+    const config = f(params)
+    setFetchConfig(config)
+    const result = await run(config); 
     setResult(result);
     return result;
   };
   return {
+    data: fetchConfig?.initData,
     ...result,
     loading,
     abort: abortLast,
@@ -22,7 +25,7 @@ export default (f: (p: any) => IFetchConfig): IUseFetchResult => {
         setResult(rerunResult)
         return rerunResult
       } else {
-        return defaultFetchResult;
+        return defaultFetchResult(fetchConf?.initData);
       }
     },
   };

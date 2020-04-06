@@ -9,6 +9,7 @@ const loadUserss = (): IFetchConfig => ({
   bodyParser: res => res.json(),
   method: "PUT",
   path: "v2/5185415ba171ea3a00704eed?mocky-delay=2000ms",
+  initData: {id: "Lol was geht"},
   onSuccess: result => {
     if (result.ok) {
       toast.info("Local Fetch Success");
@@ -21,6 +22,7 @@ const loadUsers = (id: string): IFetchConfig => {
     method: "GET",
     path: `api/users/${id}`,
     fetchSuccess: res => res.ok,
+    initData: {id: "Hey"},
     custom: {
       listCtx: { page: 10, limit: 11 }
     }

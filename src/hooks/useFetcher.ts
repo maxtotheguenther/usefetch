@@ -9,14 +9,14 @@ import {
 } from "../types";
 import { prepareFetchConfig } from "../functionalities/fetch";
 
-export const defaultFetchResult: IFetchResult = {
+export const defaultFetchResult = (initData?: any): IFetchResult => ({
   response: undefined,
-  data: undefined,
+  data: initData,
   status: undefined,
   ok: undefined,
   error: undefined,
-  rerun: () => new Promise(() => defaultFetchResult),
-};
+  rerun: () => new Promise(() => defaultFetchResult(initData)),
+});
 
 export default (): IUseFetcherResult => {
   const fetchContext = React.useContext(FetchContext);
@@ -88,7 +88,7 @@ export default (): IUseFetcherResult => {
       );
       if (resultOrError instanceof Error) {
         return {
-          ...defaultFetchResult,
+          ...defaultFetchResult(fetchConf?.initData),
           error: resultOrError,
         };
       } else {

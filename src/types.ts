@@ -39,6 +39,7 @@ export interface IFetchConfig extends BaseConfig {
   path: string;
   method: string;
   host?: string;
+  initData?: any;
   fetchSuccess?: (response: Response) => boolean;
   bodyParser?: (response: Response) => Promise<any>;
 }
@@ -71,6 +72,9 @@ export interface IFetchFinalConf {
   custom?: any;
 }
 
+/**
+ * FETCH STATE TYPES
+ */
 export interface IFetchStateResult {
   loading: boolean;
   error: boolean;
@@ -83,4 +87,7 @@ export interface IFetchState {
   setError: (hasError: boolean) => void;
 }
 
+/**
+ * FETCH CONTEXT TYPES
+ */
 export interface IFetchContext extends IFetchGlobalConf, IFetchState { }
