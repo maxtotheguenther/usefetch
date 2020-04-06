@@ -5,7 +5,7 @@ import {
   IFetchConfig,
   IFetchResult,
   IUseFetcherResult,
-  IFetchFinalConf
+  IFetchFinalConf,
 } from "../types";
 import { prepareFetchConfig } from "../functionalities/fetch";
 
@@ -15,7 +15,7 @@ export const defaultFetchResult: IFetchResult = {
   status: undefined,
   ok: undefined,
   error: undefined,
-  rerun: () => new Promise(() => defaultFetchResult)
+  rerun: () => new Promise(() => defaultFetchResult),
 };
 
 export default (): IUseFetcherResult => {
@@ -23,7 +23,7 @@ export default (): IUseFetcherResult => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [
     abortController,
-    setAbortController
+    setAbortController,
   ] = React.useState<AbortController | null>(null);
 
   const makeFetch = async (
@@ -38,15 +38,16 @@ export default (): IUseFetcherResult => {
       onError,
       fetchSuccess,
       bodyParser,
-      responseMiddleware
+      responseMiddleware,
     } = finalFetchConfig;
-    const newAbortController = new AbortController();
+    const newAbortController =
+      "AbortController" in window ? new AbortController() : null;
     setAbortController(newAbortController);
 
     const options: RequestInit | undefined = fetchOptions && {
       ...fetchOptions,
-      signal: newAbortController.signal,
-      method
+      ...(newAbortController && { signal: newAbortController.signal }),
+      method,
     };
 
     setLoading(true);
@@ -59,10 +60,10 @@ export default (): IUseFetcherResult => {
         data,
         status: response.status,
         ok: response.ok,
-        rerun: (fetchConf?: IFetchConfig) => 
-         fetchConf
+        rerun: (fetchConf?: IFetchConfig) =>
+          fetchConf
             ? makeFetch(prepareFetchConfig(fetchConf, fetchContext))
-            : makeFetch(finalFetchConfig) // Rerun with the same config
+            : makeFetch(finalFetchConfig), // Rerun with the same config
       };
       const finalResult = responseMiddleware
         ? responseMiddleware(result, finalFetchConfig)
@@ -88,11 +89,11 @@ export default (): IUseFetcherResult => {
       if (resultOrError instanceof Error) {
         return {
           ...defaultFetchResult,
-          error: resultOrError
+          error: resultOrError,
         };
       } else {
         return resultOrError;
       }
-    }
+    },
   };
 };
