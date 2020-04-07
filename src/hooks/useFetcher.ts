@@ -6,6 +6,7 @@ import {
   IFetchResult,
   IUseFetcherResult,
   IFetchFinalConf,
+  IRunChain,
 } from "../types";
 import { prepareFetchConfig } from "../functionalities/fetch";
 
@@ -25,6 +26,54 @@ export default (): IUseFetcherResult => {
     abortController,
     setAbortController,
   ] = React.useState<AbortController | null>(null);
+
+  const run = async (fetchConf: IFetchConfig) => {
+    try {
+      return await makeFetch(prepareFetchConfig(fetchConf, fetchContext));
+    } catch (error) {
+      return {
+        ...defaultFetchResult(fetchConf.initData),
+        error,
+      };
+    }
+  };
+
+  const runChain = async (chainConfigs: IRunChain) => {
+
+    let finalFetches: Promise<Array<IFetchResult>> = Promise.resolve([
+      defaultFetchResult(),
+    ]);
+
+    return chainConfigs
+      .reduce<Promise<Array<IFetchResult>>>(
+        async (prevResults, callbackForNextConfig) => {
+          finalFetches = prevResults;
+          const fetchResults = await prevResults;
+          const fetchConfig = callbackForNextConfig(fetchResults);
+          const execParallel = Array.isArray(fetchConfig);
+          if (!fetchConfig)
+            throw Error(
+              "A condition in the chain was not fulfilled. All further calls were cancelled"
+            );  
+          if (execParallel) {
+            fetchResults.unshift(defaultFetchResult());
+          } else {
+            const newResult = await run(fetchConfig as IFetchConfig);
+            fetchResults.unshift(newResult);
+          }
+          return fetchResults;
+        },
+        Promise.resolve([defaultFetchResult()])
+      )
+      .then(fetchResults => { // Get rid of reducer initial state.
+        fetchResults.pop();
+        return fetchResults;
+      })
+      .catch((e) => {
+        console.error(e)
+        return finalFetches;
+      });
+  };
 
   const makeFetch = async (
     finalFetchConfig: IFetchFinalConf
@@ -82,18 +131,7 @@ export default (): IUseFetcherResult => {
   return {
     loading,
     abortLast: () => abortController?.abort(),
-    run: async (fetchConf: IFetchConfig) => {
-      const resultOrError = await to(
-        makeFetch(prepareFetchConfig(fetchConf, fetchContext))
-      );
-      if (resultOrError instanceof Error) {
-        return {
-          ...defaultFetchResult(fetchConf?.initData),
-          error: resultOrError,
-        };
-      } else {
-        return resultOrError;
-      }
-    },
+    run,
+    runChain
   };
 };

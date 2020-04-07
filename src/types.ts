@@ -1,10 +1,12 @@
-export type IFetchConfigDependsOn = [IFetchConfig, Array<any>]
-export type IFetchConfigOrFetchConfigDependsOn = IFetchConfig | IFetchConfigDependsOn
+export type IFetchConfigDependsOn = [IFetchConfig, Array<any>];
+export type IFetchConfigOrFetchConfigDependsOn =
+  | IFetchConfig
+  | IFetchConfigDependsOn;
 
 export interface IFetchResult {
   data?: any;
   response?: Response;
-  error?: Error,
+  error?: Error;
   status?: number;
   ok?: boolean;
   custom?: any;
@@ -22,10 +24,19 @@ export interface IUseLazyFetchResult extends IFetchResult {
   abort: () => void;
 }
 
+export type IRunChain = Array<
+  (
+    previousFetchResult: Array<IFetchResult>
+  ) => Array<IFetchConfig> | IFetchConfig | undefined
+>;
+
+export type IRunChainResult = Array<IFetchResult>
+
 export interface IUseFetcherResult {
   loading: boolean;
   abortLast: () => void;
   run: (fetchConfig: IFetchConfig) => Promise<IFetchResult>;
+  runChain: (chainConfigs: IRunChain) => Promise<Array<IFetchResult>>;
 }
 
 export interface BaseConfig {
@@ -90,4 +101,4 @@ export interface IFetchState {
 /**
  * FETCH CONTEXT TYPES
  */
-export interface IFetchContext extends IFetchGlobalConf, IFetchState { }
+export interface IFetchContext extends IFetchGlobalConf, IFetchState {}

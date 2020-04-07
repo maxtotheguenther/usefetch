@@ -5,6 +5,7 @@ import FetchDemo from "./FetchDemo";
 import FetcherDemo from "./FetcherDemo";
 import "./stories.css";
 import LazyFetchDemo from "./LazyFetchDemo";
+import MultiFetcherDemo from "./MultiFetcherDemo";
 
 storiesOf("Playground", module)
   .add("UseFetchDemo", () => (
@@ -21,5 +22,10 @@ storiesOf("Playground", module)
   .add("UseFetcherDemo", () => (
     <App>
       <FetcherDemo />
+    </App>
+  ))
+  .add("UseMultiFetcher", () => (
+    <App>
+      <MultiFetcherDemo />
     </App>
   ));
