@@ -49,7 +49,7 @@ export default () => {
       <p>Second request</p>
       <p>{JSON.stringify(user2, null, 2)}</p>
       {error && <p>{error.message}</p>}
-      <button onClick={rerun}>Rerun Fetch 1</button>
+      <button onClick={() => rerun()}>Rerun Fetch 1</button>
     </>
   );
 };
