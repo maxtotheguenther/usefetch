@@ -26,8 +26,8 @@ export interface IUseLazyFetchResult extends IFetchResult {
 
 export type IRunChain = Array<
   (
-    previousFetchResult: Array<IFetchResult>
-  ) => Array<IFetchConfig> | IFetchConfig | undefined
+    previousFetchResult: Array<IFetchResult | undefined>
+  ) => Array<IFetchConfig> | IFetchConfig | undefined | boolean
 >;
 
 export type IRunChainResult = Array<IFetchResult>
@@ -36,7 +36,7 @@ export interface IUseFetcherResult {
   loading: boolean;
   abortLast: () => void;
   run: (fetchConfig: IFetchConfig) => Promise<IFetchResult>;
-  runChain: (chainConfigs: IRunChain) => Promise<Array<IFetchResult>>;
+  runChain: (chainConfigs: IRunChain) => Promise<Array<IFetchResult | undefined>>;
 }
 
 export interface BaseConfig {

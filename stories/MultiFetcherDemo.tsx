@@ -14,7 +14,9 @@ export default () => {
   const lol = async () => {
     const wasDasDann = await fetcher.runChain([
       () => loadUsers({ id: "1" }),
-      () => loadUsers({ id: "sadasdasdasd" }),
+      ([last]) => {
+        return last.ok ? loadUsers({ id: "asdsadsadad"}) : true
+      },
       ([last]) => {
         if (!last.ok) {
           return loadUsers({ id: "3" });

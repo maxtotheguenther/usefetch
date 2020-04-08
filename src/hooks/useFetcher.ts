@@ -40,35 +40,35 @@ export default (): IUseFetcherResult => {
 
   const runChain = async (chainConfigs: IRunChain) => {
 
-    let finalFetches: Promise<Array<IFetchResult>> = Promise.resolve([
-      defaultFetchResult(),
-    ]);
+    let finalFetches: Promise<Array<
+      IFetchResult | undefined
+    >> = Promise.resolve([]);
 
     return chainConfigs
-      .reduce<Promise<Array<IFetchResult>>>(
+      .reduce<Promise<Array<IFetchResult | undefined>>>(
         async (prevResults, callbackForNextConfig) => {
-          finalFetches = prevResults;
           const fetchResults = await prevResults;
           const fetchConfig = callbackForNextConfig(fetchResults);
-          const execParallel = Array.isArray(fetchConfig);
-          if (!fetchConfig)
-            throw Error(
+          const breakChain =
+            typeof fetchConfig === "boolean" && fetchConfig === true;
+          if (breakChain)
+            throw new Error(
               "A condition in the chain was not fulfilled. All further calls were cancelled"
-            );  
-          if (execParallel) {
-            fetchResults.unshift(defaultFetchResult());
-          } else {
-            const newResult = await run(fetchConfig as IFetchConfig);
-            fetchResults.unshift(newResult);
+            );
+          finalFetches = prevResults;
+          if (fetchConfig) {
+            const execParallel = Array.isArray(fetchConfig);
+            if (execParallel) {
+              fetchResults.unshift(defaultFetchResult());
+            } else {
+              const newResult = await run(fetchConfig as IFetchConfig);
+              fetchResults.unshift(newResult);
+            }
           }
           return fetchResults;
         },
-        Promise.resolve([defaultFetchResult()])
+        Promise.resolve([])
       )
-      .then(fetchResults => { // Get rid of reducer initial state.
-        fetchResults.pop();
-        return fetchResults;
-      })
       .catch((e) => {
         console.error(e)
         return finalFetches;
@@ -132,6 +132,6 @@ export default (): IUseFetcherResult => {
     loading,
     abortLast: () => abortController?.abort(),
     run,
-    runChain
+    runChain,
   };
 };
